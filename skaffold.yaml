@@ -5,10 +5,12 @@ deploy:
     manifests:
       - ./infra/k8s/*
 build:
-  local:
-    push: false
+  #   local:
+  #     push: false
+  googleCloudBuild:
+    projectId: soldout-dev
   artifacts:
-    - image: pfurtak/auth
+    - image: us.gcr.io/soldout-dev/auth
       context: auth
       docker:
         dockerfile: Dockerfile
