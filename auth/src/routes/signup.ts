@@ -39,7 +39,7 @@ router.post(
         id: user.id,
         email: user.email,
       },
-      'test'
+      process.env.JWT_KEY!
     );
 
     req.session = {
