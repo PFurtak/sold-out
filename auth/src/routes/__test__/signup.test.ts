@@ -34,3 +34,21 @@ it('returns 400 with an invalid password', async () => {
 it('returns 400 with a empty request', async () => {
   return request(app).post('/api/users/signup').send({}).expect(400);
 });
+
+it('does not allow duplicate emails', async () => {
+  await request(app)
+    .post('/api/users/signup')
+    .send({
+      email: 'test@test.com',
+      password: 'password',
+    })
+    .expect(201);
+
+  await request(app)
+    .post('/api/users/signup')
+    .send({
+      email: 'test@test.com',
+      password: 'password',
+    })
+    .expect(400);
+});
