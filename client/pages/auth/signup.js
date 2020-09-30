@@ -8,12 +8,16 @@ export default () => {
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    const res = await axios.post('/api/users/signup', {
-      email,
-      password,
-    });
+    try {
+      const response = await axios.post('/api/users/signup', {
+        email,
+        password,
+      });
 
-    console.log(res.data);
+      console.log(response.data);
+    } catch (err) {
+      console.log(err.response.data);
+    }
   };
 
   return (
