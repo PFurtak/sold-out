@@ -1,6 +1,7 @@
 import request from 'supertest';
 import { app } from '../../app';
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
+import { natsWrapper } from '../../nats-wrapper';
 
 it('returns 404 if provided id is invalid', async () => {
    const id = new mongoose.Types.ObjectId().toHexString();
@@ -103,4 +104,27 @@ it('updates the ticket if user is authenticated and valid inputs are provided', 
 
    expect(ticketResponse.body.title).toEqual('Weird Al');
    expect(ticketResponse.body.price).toEqual(12);
+});
+
+it('publishes an event', async () => {
+    const cookie = global.signin();
+
+    const response = await request(app)
+     .post('/api/tickets')
+     .set('Cookie', cookie)
+     .send({
+       title: 'Beastie Boys',
+       price: 38
+   });
+
+   await request(app)
+   .put(`/api/tickets/${response.body.id}`)
+   .set('Cookie', cookie)
+   .send({
+       title: 'Weird Al',
+       price: 12
+   })
+   .expect(200);
+
+   expect(natsWrapper.client.publish).toHaveBeenCalled();
 });
